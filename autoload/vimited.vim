@@ -10,10 +10,18 @@ function! vimited#set(start_line, end_line) range abort
         " FIXME: <buffer> causes something wrong.
         autocmd CursorMoved * call s:move_if_need()
     augroup END
+
+    let upside_syntax = 'syntax region VimitedOutside start=/\%1l/ end=/\%' . s:start_line . 'l/'
+    execute upside_syntax
+
+    let last_line = line('$')
+    let downside_syntax = 'syntax region VimitedOutside start=/\%' . (s:end_line + 1) . 'l/ end=/\%' . (last_line + 1) . 'l/'
+    execute downside_syntax
 endfunction
 
 function! vimited#clear() abort
     autocmd! vimited CursorMoved
+    syntax clear VimitedOutside
 endfunction
 
 function! s:move_if_need() abort

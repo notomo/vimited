@@ -1,0 +1,9 @@
+
+call themis#option('recursive', 1)
+
+function! VimitedTestBeforeEach() abort
+endfunction
+
+function! VimitedTestAfterEach() abort
+    silent! %bwipeout!
+endfunction

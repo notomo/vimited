@@ -5,6 +5,7 @@ let s:SIGN_END = 'vimitedEnd'
 
 let s:start_line = -1
 let s:end_line = -1
+let s:before_column = -1
 let s:start_sign_id = 0
 let s:end_sign_id = 0
 function! vimited#set(start_line, end_line) range abort
@@ -38,10 +39,11 @@ endfunction
 function! s:move_if_need() abort
     let line = line('.')
     if line < s:start_line
-        let pos = getpos('.')
-        call setpos('.', [0, s:start_line, pos[2]])
+        let col = line + 1 == s:start_line && s:before_column < col('.') ? 1 : s:before_column
+        call setpos('.', [0, s:start_line, col])
     elseif line > s:end_line
-        let pos = getpos('.')
-        call setpos('.', [0, s:end_line, pos[2]])
+        let col = line - 1 == s:end_line && s:before_column > col('.') ? strlen(getline(s:end_line)) : s:before_column
+        call setpos('.', [0, s:end_line, col])
     endif
+    let s:before_column = col('.')
 endfunction

@@ -32,6 +32,8 @@ function! vimited#set(start_line, end_line) abort
     execute downside_syntax
     call sign_define(s:SIGN_END, {'text': 'E'})
     let s:vars[bufnr]['sign_id']['end'] = sign_place(s:vars[bufnr]['sign_id']['end'], s:SIGN_GROUP, s:SIGN_END, bufnr, {'lnum': end_line})
+
+    syntax sync fromstart
 endfunction
 
 function! vimited#clear() abort

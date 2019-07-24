@@ -10,6 +10,8 @@ function! vimited#set(start_line, end_line) abort
     augroup vimited
         autocmd! vimited CursorMoved <buffer>
         autocmd CursorMoved <buffer> call s:move_if_need()
+        autocmd TextChanged <buffer> call s:move_range_if_need()
+        autocmd TextChangedI <buffer> call s:move_range_if_need()
     augroup END
 
     let bufnr = bufnr('%')
@@ -22,16 +24,9 @@ function! vimited#set(start_line, end_line) abort
     let start_line = s:vars[bufnr]['range']['start']
     let end_line = s:vars[bufnr]['range']['end']
 
-    let upside_syntax = 'syntax region VimitedOutside start=/\%1l/ end=/\%' . start_line . 'l/'
-    execute upside_syntax
     call s:signs.set(s:SIGN_START, 'S', bufnr, start_line)
-
-    let last_line = line('$')
-    let downside_syntax = 'syntax region VimitedOutside start=/\%' . (end_line + 1) . 'l/ end=/\%' . (last_line + 1) . 'l/'
-    execute downside_syntax
     call s:signs.set(s:SIGN_END, 'E', bufnr, end_line)
-
-    syntax sync fromstart
+    call s:set_syntax(start_line, end_line)
 endfunction
 
 function! vimited#clear() abort
@@ -41,10 +36,23 @@ function! vimited#clear() abort
     endif
 
     autocmd! vimited CursorMoved <buffer>
+    autocmd! vimited TextChanged <buffer>
+    autocmd! vimited TextChangedI <buffer>
     syntax clear VimitedOutside
     call s:signs.unset(s:SIGN_START, bufnr)
     call s:signs.unset(s:SIGN_END, bufnr)
     unlet s:vars[bufnr]
+endfunction
+
+function! s:set_syntax(start_line, end_line) abort
+    let upside_syntax = 'syntax region VimitedOutside start=/\%1l/ end=/\%' . a:start_line . 'l/'
+    execute upside_syntax
+
+    let last_line = line('$')
+    let downside_syntax = 'syntax region VimitedOutside start=/\%' . (a:end_line + 1) . 'l/ end=/\%' . (last_line + 1) . 'l/'
+    execute downside_syntax
+
+    syntax sync fromstart
 endfunction
 
 function! s:move_if_need() abort
@@ -65,6 +73,18 @@ function! s:move_if_need() abort
     let s:vars[bufnr]['before_column'] = col('.')
 endfunction
 
+function! s:move_range_if_need() abort
+    let bufnr = bufnr('%')
+    let signs = s:signs.get() 
+    if empty(signs)
+        return
+    endif
+    let s:vars[bufnr]['range']['start'] = signs[0]['lnum']
+    let s:vars[bufnr]['range']['end'] = signs[1]['lnum']
+    syntax clear VimitedOutside
+    call s:set_syntax(s:vars[bufnr]['range']['start'], s:vars[bufnr]['range']['end'])
+endfunction
+
 function! s:set_sign(name, text, bufnr, line) abort
     call sign_define(a:name, {'text': a:text})
     let s:vars[a:bufnr]['sign_id'][a:name] = sign_place(s:vars[a:bufnr]['sign_id'][a:name], s:SIGN_GROUP, a:name, a:bufnr, {'lnum': a:line})
@@ -74,11 +94,17 @@ function! s:unset_sign(name, bufnr) abort
     call sign_unplace(s:SIGN_GROUP, {'id': s:vars[a:bufnr]['sign_id'][a:name]})
 endfunction
 
+function! s:get_signs() abort
+    return sign_getplaced('%', {'group': s:SIGN_GROUP})[0]['signs']
+endfunction
+
 let s:signs = {}
 if has('signs')
     let s:signs['set'] = function('s:set_sign')
     let s:signs['unset'] = function('s:unset_sign')
+    let s:signs['get'] = function('s:get_signs')
 else
     let s:signs['set'] = {... -> ''}
     let s:signs['unset'] = {... -> ''}
+    let s:signs['get'] = {... -> []}
 endif

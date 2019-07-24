@@ -76,3 +76,25 @@ endfunction
 function! s:suite.clear_nothing()
     VimitedClear
 endfunction
+
+function! s:suite.changed()
+    let lines = [
+        \ 'hoge',
+        \ 'hoge',
+        \ 'hoge',
+        \ 'hoge',
+        \ 'hoge',
+    \ ]
+    call append(0, lines)
+
+    2,3VimitedSet
+    doautocmd vimited CursorMoved
+
+    call append(2, ['foo'])
+    doautocmd vimited TextChanged
+
+    normal! G
+    doautocmd vimited CursorMoved
+
+    call s:assert.equals(line('.'), 4)
+endfunction

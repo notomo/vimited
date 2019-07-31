@@ -10,6 +10,7 @@ function! vimited#set(start_line, end_line) abort
     augroup vimited
         autocmd! vimited CursorMoved <buffer>
         autocmd CursorMoved <buffer> call s:move_if_need()
+        autocmd CursorMovedI <buffer> call s:move_if_need()
         autocmd TextChanged <buffer> call s:move_range_if_need()
         autocmd TextChangedI <buffer> call s:move_range_if_need()
     augroup END
@@ -36,6 +37,7 @@ function! vimited#clear() abort
     endif
 
     autocmd! vimited CursorMoved <buffer>
+    autocmd! vimited CursorMovedI <buffer>
     autocmd! vimited TextChanged <buffer>
     autocmd! vimited TextChangedI <buffer>
     syntax clear VimitedOutside

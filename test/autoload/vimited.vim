@@ -68,6 +68,11 @@ function! s:suite.set()
     call s:assert.equals(line('.'), 2)
     call s:assert.equals(col('.'), 4)
 
+    execute "normal! i\<Up>"
+    doautocmd vimited CursorMovedI
+    call s:assert.equals(line('.'), 2)
+    call s:assert.equals(col('.'), 4)
+
     VimitedClear
     normal! gg
     call s:assert.equals(line('.'), 1)

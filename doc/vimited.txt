@@ -1,0 +1,19 @@
+*vimited.txt*
+
+==============================================================================
+COMMANDS                                                    *vimited-commands*
+
+:VimitedSet                                                      *:VimitedSet*
+  Set a range the cursor is able to move.
+
+:VimitedClear                                                  *:VimitedClear*
+  Clear the range that set by |VimitedSet|.
+
+==============================================================================
+HIGHLIGHT GROUPS                                    *vimited-highlight-groups*
+
+VimitedOutside                                                *VimitedOutside*
+  A highlight group for outside the range.
+
+==============================================================================
+vim:tw=78:ft=help

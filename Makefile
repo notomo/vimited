@@ -6,4 +6,8 @@ demo:
 	# go get -u github.com/rhysd/vimwasm-try-plugin
 	vimwasm-try-plugin 'notomo/vimited'
 
+doc:
+	gevdoc
+
 .PHONY: test
+.PHONY: doc

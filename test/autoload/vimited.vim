@@ -1,6 +1,6 @@
 
 let s:suite = themis#suite('vimited')
-let s:assert = themis#helper('assert')
+let s:assert = VimitedTestAssert()
 
 function! s:suite.before_each()
     call VimitedTestBeforeEach()
@@ -20,7 +20,7 @@ function! s:suite.set_with_one_line()
 
     2VimitedSet
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 2)
+    call s:assert.line_number(2)
 endfunction
 
 function! s:suite.set()
@@ -35,11 +35,11 @@ function! s:suite.set()
 
     2,3VimitedSet
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 3)
+    call s:assert.line_number(3)
 
     normal! gg
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 2)
+    call s:assert.line_number(2)
 
     normal! b
     doautocmd vimited CursorMoved
@@ -49,8 +49,8 @@ function! s:suite.set()
     doautocmd vimited CursorMoved
     normal! b
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 2)
-    call s:assert.equals(col('.'), 1)
+    call s:assert.line_number(2)
+    call s:assert.column_number(1)
 
     normal! e
     doautocmd vimited CursorMoved
@@ -60,22 +60,22 @@ function! s:suite.set()
     doautocmd vimited CursorMoved
     normal! e
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 3)
-    call s:assert.equals(col('.'), 4)
+    call s:assert.line_number(3)
+    call s:assert.column_number(4)
 
     normal! gg
     doautocmd vimited CursorMoved
-    call s:assert.equals(line('.'), 2)
-    call s:assert.equals(col('.'), 4)
+    call s:assert.line_number(2)
+    call s:assert.column_number(4)
 
     execute "normal! i\<Up>"
     doautocmd vimited CursorMovedI
-    call s:assert.equals(line('.'), 2)
-    call s:assert.equals(col('.'), 4)
+    call s:assert.line_number(2)
+    call s:assert.column_number(4)
 
     VimitedClear
     normal! gg
-    call s:assert.equals(line('.'), 1)
+    call s:assert.line_number(1)
 endfunction
 
 function! s:suite.clear_nothing()
@@ -101,5 +101,5 @@ function! s:suite.changed()
     normal! G
     doautocmd vimited CursorMoved
 
-    call s:assert.equals(line('.'), 4)
+    call s:assert.line_number(4)
 endfunction

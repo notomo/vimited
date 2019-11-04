@@ -1,6 +1,24 @@
 
 call themis#option('recursive', 1)
 
+function! VimitedTestAssert() abort
+    let assert = themis#helper('assert')
+
+    function! assert.line_number(expected) abort
+        let actual = line('.')
+        let message = printf('line number should be %s, but actual: %s', a:expected, actual)
+        call self.equals(a:expected, actual, message)
+    endfunction
+
+    function! assert.column_number(expected) abort
+        let actual = col('.')
+        let message = printf('column number should be %s, but actual: %s', a:expected, actual)
+        call self.equals(a:expected, actual, message)
+    endfunction
+
+    return assert
+endfunction
+
 function! VimitedTestBeforeEach() abort
 endfunction
 

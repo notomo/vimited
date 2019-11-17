@@ -16,6 +16,13 @@ function! VimitedTestAssert() abort
         call self.equals(a:expected, actual, message)
     endfunction
 
+    function! assert.not_exists_autocmd(name) abort
+        let autocmds = s:redir('autocmd')
+        for line in split(autocmds, "\n")
+            call self.true(count(line, a:name, v:true) == 0, a:name . ' should not be in the autocmd: ' . line)
+        endfor
+    endfunction
+
     return assert
 endfunction
 
@@ -24,4 +31,14 @@ endfunction
 
 function! VimitedTestAfterEach() abort
     silent! %bwipeout!
+endfunction
+
+function! s:redir(cmd) abort
+    let [tmp_verbose, tmp_verbosefile] = [&verbose, &verbosefile]
+    set verbose=0 verbosefile=
+    redir => result
+    silent! execute a:cmd
+    redir END
+    let [&verbose, &verbosefile] = [tmp_verbose, tmp_verbosefile]
+    return result
 endfunction

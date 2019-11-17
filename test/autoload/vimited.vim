@@ -76,6 +76,7 @@ function! s:suite.set()
     VimitedClear
     normal! gg
     call s:assert.line_number(1)
+    call s:assert.not_exists_autocmd('vimited')
 endfunction
 
 function! s:suite.clear_nothing()
